@@ -3,7 +3,7 @@ FROM openjdk:11-slim as build-env
 WORKDIR /src
 COPY . .
 
-RUN ./gradlew build
+RUN ./gradlew --no-daemon build
 
 FROM openjdk:11-jre-slim
 
