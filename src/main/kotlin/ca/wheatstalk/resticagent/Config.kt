@@ -46,7 +46,7 @@ fun getConfig2(config: PropertiesConfiguration) =
         resticPassword = config.getString("restic.password"),
         awsRegion = config.getString("aws.region"),
         awsAccessKeyId = config.getString("aws.accessKeyId"),
-        awsSecretAccessKey = config.getString("aws.secretKey")
+        awsSecretAccessKey = config.getString("aws.secretAccessKey")
     )
 
 fun getConfig(): Config {
