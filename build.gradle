@@ -9,7 +9,7 @@ plugins {
 }
 
 group 'ca.wheatstalk'
-version '1.0-SNAPSHOT'
+version 'cd'
 
 repositories {
     mavenCentral()
