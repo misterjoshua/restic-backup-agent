@@ -1,7 +1,7 @@
 <img src="https://img.shields.io/docker/automated/wheatstalk/restic-backup-agent.svg" /> <img src="https://img.shields.io/docker/build/wheatstalk/restic-backup-agent.svg" />
 
 # restic-backup-agent
-The Restic Backup Agent provides automation for backup and restore using the excellent restic backup software. The agent software allows you do the following:
+The Restic Backup Agent provides automation for backup and restore using the excellent restic backup software.
 
 ## Features
 * Tell Restic what to backup and where to restore
