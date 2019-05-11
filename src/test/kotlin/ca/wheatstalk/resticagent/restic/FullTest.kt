@@ -1,5 +1,6 @@
 package ca.wheatstalk.resticagent.restic
 
+import ca.wheatstalk.resticagent.command.RunCommand
 import ca.wheatstalk.resticagent.restic.commands.InitCommand
 import org.apache.commons.io.FileUtils
 import org.junit.jupiter.api.Assertions.*
@@ -9,15 +10,29 @@ import java.nio.file.Paths
 
 internal class FullTest {
     @Test
-    fun myTest() {
-        val testDir = Paths.get(System.getProperty("java.io.tmpdir"), "restic").toAbsolutePath().toString()
-
-        FileUtils.deleteDirectory(File(testDir))
-
-        val contentDir = "$testDir/content"
-        File(contentDir).mkdirs()
+    fun myBadConfigurationTest(){
+        val (testDir, _) = prepareDirectory()
 
         val config = ResticConfig(
+            resticPath = "doesnotexist",
+            workingDirectory = testDir,
+            repository = "repo",
+            repositoryPassword = "password",
+            defaultBackupPath = "content",
+            defaultRestorePath = "."
+        )
+
+        assertThrows(RunCommand.CommandProbablyDoesntExistException::class.java) {
+            InitCommand(config).buildInit().execute()
+        }
+    }
+
+    @Test
+    fun myBackupRestoreTest() {
+        val (testDir, contentDir) = prepareDirectory()
+
+        val config = ResticConfig(
+            resticPath = "restic",
             workingDirectory = testDir,
             repository = "repo",
             repositoryPassword = "password",
@@ -62,5 +77,14 @@ internal class FullTest {
         commandStringParser.parse("restore latest").execute()
         assertTrue(testFile("test1"))
         assertTrue(testFile("test2"))
+    }
+
+    private fun prepareDirectory(): Pair<String, String> {
+        val testDir = Paths.get(System.getProperty("java.io.tmpdir"), "restic").toAbsolutePath().toString()
+        FileUtils.deleteDirectory(File(testDir))
+
+        val contentDir = "$testDir/content"
+        File(contentDir).mkdirs()
+        return Pair(testDir, contentDir)
     }
 }

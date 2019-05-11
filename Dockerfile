@@ -3,10 +3,12 @@ FROM openjdk:11-slim as build-env
 WORKDIR /src
 COPY . .
 
+RUN apt-get update && apt-get install -y restic
 RUN ./gradlew --no-daemon build
 
 FROM openjdk:11-jre-slim
 
+RUN apt-get update && apt-get install -y restic
 COPY --from=build-env /src/build/libs/restic-agent-cd.jar /restic-agent.jar
 
 ENV AGENT_COMMAND_QUEUE=""

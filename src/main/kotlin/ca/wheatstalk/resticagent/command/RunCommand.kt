@@ -2,6 +2,8 @@ package ca.wheatstalk.resticagent.command
 
 import org.slf4j.LoggerFactory
 import java.io.File
+import java.io.IOException
+import java.lang.Exception
 import java.lang.RuntimeException
 
 class RunCommand(
@@ -26,7 +28,11 @@ class RunCommand(
                 environment()[it.key] = it.value
             }
 
-            start()
+            try {
+                start()
+            } catch (e: IOException) {
+                throw CommandProbablyDoesntExistException("IO Exception running $invocation. Check that the command exists. $e: ${e.message}")
+            }
         }
 
         val exitValue = process.waitFor()
@@ -38,4 +44,6 @@ class RunCommand(
     }
 
     override fun toString() = invocation.joinToString(" ")
+
+    class CommandProbablyDoesntExistException(message: String): Exception(message)
 }
