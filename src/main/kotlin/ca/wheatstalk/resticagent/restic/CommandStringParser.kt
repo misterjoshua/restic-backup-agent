@@ -11,7 +11,6 @@ data class CommandStringParser(
     private val resticConfig: ResticConfig
 ): CommandParser {
     private val logger = LoggerFactory.getLogger(javaClass)
-    private val runCommandBuilder = ResticRunCommandBuilder(resticConfig = resticConfig)
 
     override fun parse(commandString: String) =
         firstMatch<Command>(commandString) {
