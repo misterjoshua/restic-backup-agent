@@ -5,6 +5,7 @@ import ca.wheatstalk.resticagent.firstMatch
 import ca.wheatstalk.resticagent.restic.commands.BackupCommand
 import ca.wheatstalk.resticagent.restic.commands.RestoreCommand
 import ca.wheatstalk.resticagent.restic.commands.SnapshotsCommand
+import ca.wheatstalk.resticagent.restic.commands.WrappedCommand
 import org.slf4j.LoggerFactory
 
 data class CommandStringParser(
@@ -17,7 +18,8 @@ data class CommandStringParser(
             // Asking for a backup
             matchPattern("^backup$") {
                 logger.debug("Parsing backup command")
-                BackupCommand(resticConfig).backup()
+                WrappedCommand(resticConfig).wrap(
+                    BackupCommand(resticConfig).backup())
             }
             // Asking for a snapshot list
             matchPattern("^snapshots$") {
@@ -29,7 +31,8 @@ data class CommandStringParser(
                 val (options, _, _, snapshotId) = it.destructured
 
                 logger.debug("Parsing restore command for $snapshotId with options $options")
-                RestoreCommand(resticConfig).restore(options, snapshotId)
+                WrappedCommand(resticConfig).wrap(
+                    RestoreCommand(resticConfig).restore(options, snapshotId))
             }
         }
 }

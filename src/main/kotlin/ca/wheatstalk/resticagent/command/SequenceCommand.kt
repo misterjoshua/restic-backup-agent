@@ -2,7 +2,7 @@ package ca.wheatstalk.resticagent.command
 
 import org.slf4j.LoggerFactory
 
-class SequenceCommand(
+open class SequenceCommand(
     val sequence: Array<Command>
 ): Command {
     private val logger = LoggerFactory.getLogger(javaClass)
