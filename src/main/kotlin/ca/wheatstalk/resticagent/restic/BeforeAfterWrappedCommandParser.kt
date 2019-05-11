@@ -4,10 +4,10 @@ import ca.wheatstalk.resticagent.command.*
 import org.slf4j.LoggerFactory
 
 class BeforeAfterWrappedCommandParser(
-    resticContext: ResticContext
+    resticConfig: ResticConfig
 ): CommandParser {
     private val logger = LoggerFactory.getLogger(javaClass)
-    private val commandStringParser = CommandStringParser(resticContext = resticContext)
+    private val commandStringParser = CommandStringParser(resticConfig = resticConfig)
 
     override fun parse(commandString: String): Command {
         return SequenceCommand(

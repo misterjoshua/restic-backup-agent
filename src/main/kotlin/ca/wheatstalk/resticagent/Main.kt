@@ -1,65 +1,32 @@
 package ca.wheatstalk.resticagent
 
+import ca.wheatstalk.resticagent.restic.BeforeAfterWrappedCommandParser
 import ca.wheatstalk.resticagent.restic.CommandParser
-
-fun loadConfig(file: String) {
-
-}
+import com.amazonaws.auth.AWSStaticCredentialsProvider
+import com.amazonaws.auth.BasicAWSCredentials
+import com.amazonaws.services.sqs.AmazonSQS
+import com.amazonaws.services.sqs.AmazonSQSClientBuilder
+import org.apache.commons.configuration2.builder.fluent.Configurations
 
 fun main(){
     try {
-        val config = getConfig()
-        val commandParser = getCommandParser(config)
+        val configProperties = Configurations().properties("dev.properties")!!
 
-//        runJLineRepl(commandBuilder)
-//        commandBuilder.parse("restore latest").execute()
-        runReplLoop(commandParser)
-//        runQueueLoop(config, commandParser)
+        val commandParser = BeforeAfterWrappedCommandParser(
+            resticConfig = readResticConfig(configProperties)
+        )
+
+        commandParser.parse("restore latest").execute()
+
+        if (false) {
+            runReplLoop(commandParser)
+        }
+
+        val sqsConfig = readSqsConfig(configProperties)
+        if (sqsConfig.isActive) {
+            runSqsQueueLoop(sqsConfig, commandParser)
+        }
     } catch (e: Exception) {
         throw e
     }
 }
-
-fun runReplLoop(commandParser: CommandParser) {
-    loop@ while (true) {
-        print("restic> ")
-        val line = readLine()
-
-        when (line) {
-            null -> break@loop
-            "exit" -> break@loop
-            else -> {
-                try {
-                    commandParser.parse(line).execute()
-                } catch (e: Exception) {
-                    println("Error: $e")
-                    continue@loop
-                }
-            }
-        }
-    }
-}
-
-fun runQueueLoop(
-    config: Config,
-    commandParser: CommandParser
-) {
-    val sqs = getSqsClient(config)
-    while (true) {
-        val messageResult = sqs.receiveMessage(config.commandQueue)
-        for (message in messageResult.messages) {
-            try {
-                commandParser.parse(message.body).execute()
-            } catch (e: Matcher.UnknownPatternException) {
-                println(e)
-            } catch (e: Exception) {
-                throw e
-            }
-            finally {
-                sqs.deleteMessage(config.commandQueue, message.receiptHandle)
-            }
-        }
-    }
-}
-
-

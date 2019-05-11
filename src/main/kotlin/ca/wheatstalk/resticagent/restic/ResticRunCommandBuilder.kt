@@ -4,14 +4,14 @@ import ca.wheatstalk.resticagent.command.CommandInvocation
 import ca.wheatstalk.resticagent.command.RunCommand
 
 class ResticRunCommandBuilder(
-    val resticContext: ResticContext
+    val resticConfig: ResticConfig
 ) {
-    private val environmentBuilder = EnvironmentBuilder(resticContext = resticContext)
+    private val environmentBuilder = EnvironmentBuilder(resticConfig = resticConfig)
 
     fun build(invocation: CommandInvocation) =
         RunCommand(
-            invocation = listOf(resticContext.resticPath) + invocation,
+            invocation = listOf(resticConfig.resticPath) + invocation,
             environment = environmentBuilder.build(),
-            workDirectory = resticContext.workingDirectory
+            workDirectory = resticConfig.workingDirectory
         )
 }

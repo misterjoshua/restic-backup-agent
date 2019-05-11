@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test
 internal class BeforeAfterWrappedCommandParserTest {
     @Test
     fun myTest() {
-        val context = ResticContext()
-        val parser = BeforeAfterWrappedCommandParser(resticContext = context)
+        val context = ResticConfig()
+        val parser = BeforeAfterWrappedCommandParser(resticConfig = context)
 
         val sequence = parser.parse("snapshots") as? SequenceCommand ?: throw Assertions.fail("It didn't return a sequence of commands")
 

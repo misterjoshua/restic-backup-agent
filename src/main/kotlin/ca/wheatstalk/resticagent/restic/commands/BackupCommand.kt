@@ -1,8 +1,8 @@
 package ca.wheatstalk.resticagent.restic.commands
 
-import ca.wheatstalk.resticagent.restic.ResticContext
+import ca.wheatstalk.resticagent.restic.ResticConfig
 
-class BackupCommand (resticContext: ResticContext) : CommandBase(resticContext) {
-    fun backup() = backup(resticContext.defaultBackupPath)
+class BackupCommand (resticConfig: ResticConfig) : CommandBase(resticConfig) {
+    fun backup() = backup(resticConfig.defaultBackupPath)
     fun backup(backupPath: String) = runCommandBuilder.build(listOf("backup", backupPath))
 }

@@ -1,6 +1,5 @@
 package ca.wheatstalk.resticagent.restic
 
-import ca.wheatstalk.resticagent.command.CommandEnvironmentVariables
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -8,31 +7,46 @@ class CommandStringParserTest {
     @Test fun commandStrings() {
         val resticPath = "/special/path/to/restic"
         val resticWorkdir = "/workdir"
-        val resticDefaultBackupPath = "subdir"
+        val resticDefaultBackupPath = "subdir-backup"
+        val resticDefaultRestorePath = "subdir-restore"
 
-        data class TestCase(val commandString: String, val expected: String)
-        val commandStrings = listOf(
-            TestCase("backup","$resticPath backup $resticDefaultBackupPath"),
-            TestCase("restore latest","$resticPath restore --path $resticWorkdir/$resticDefaultBackupPath --target $resticDefaultBackupPath latest"),
-            TestCase("restore 1a2b3c4d","$resticPath restore --path $resticWorkdir/$resticDefaultBackupPath --target $resticDefaultBackupPath 1a2b3c4d"),
-            TestCase("restore --host myhostname latest","$resticPath restore --host myhostname --path $resticWorkdir/$resticDefaultBackupPath --target $resticDefaultBackupPath latest"),
-            TestCase("restore --host myhostname --tag mytag latest","$resticPath restore --host myhostname --tag mytag --path $resticWorkdir/$resticDefaultBackupPath --target $resticDefaultBackupPath latest")
-        )
-
-        val resticContext = ResticContext(
+        val resticContext = ResticConfig(
             resticPath = resticPath,
+            workingDirectory = resticWorkdir,
             repository = "",
             repositoryPassword = "",
-            workingDirectory = resticWorkdir,
-            defaultBackupPath = resticDefaultBackupPath
+            defaultBackupPath = resticDefaultBackupPath,
+            defaultRestorePath = resticDefaultRestorePath
         )
 
         val builder = CommandStringParser(
-            resticContext = resticContext
+            resticConfig = resticContext
         )
-        commandStrings.forEach {
-            Assertions.assertEquals(it.expected, builder.parse(it.commandString).toString())
-        }
+
+        data class TestCase(val command: String, val expects: String)
+        fun TestCase.test() =
+            Assertions.assertEquals(this.expects, builder.parse(this.command).toString())
+
+        TestCase(
+            command = "backup",
+            expects = "$resticPath backup $resticDefaultBackupPath")
+            .test()
+        TestCase(
+            command = "restore latest",
+            expects = "$resticPath restore --path $resticWorkdir/$resticDefaultBackupPath --target $resticDefaultRestorePath latest")
+            .test()
+        TestCase(
+            command = "restore 1a2b3c4d",
+            expects = "$resticPath restore --path $resticWorkdir/$resticDefaultBackupPath --target $resticDefaultRestorePath 1a2b3c4d")
+            .test()
+        TestCase(
+            command = "restore --host myhostname latest",
+            expects = "$resticPath restore --host myhostname --path $resticWorkdir/$resticDefaultBackupPath --target $resticDefaultRestorePath latest")
+            .test()
+        TestCase(
+            command = "restore --host myhostname --tag mytag latest",
+            expects = "$resticPath restore --host myhostname --tag mytag --path $resticWorkdir/$resticDefaultBackupPath --target $resticDefaultRestorePath latest")
+            .test()
     }
 
 

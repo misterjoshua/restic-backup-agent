@@ -1,9 +1,8 @@
 package ca.wheatstalk.resticagent.restic.commands
 
-import ca.wheatstalk.resticagent.restic.ResticContext
-import ca.wheatstalk.resticagent.restic.ResticRunCommandBuilder
+import ca.wheatstalk.resticagent.restic.ResticConfig
 
-class RestoreCommand (resticContext: ResticContext) : CommandBase(resticContext) {
+class RestoreCommand (resticConfig: ResticConfig) : CommandBase(resticConfig) {
     fun restore(options: String, snapshotId: String) =
         runCommandBuilder.build(buildRestoreInvocation(options, snapshotId))
 
@@ -21,8 +20,8 @@ class RestoreCommand (resticContext: ResticContext) : CommandBase(resticContext)
 
         argsList.addAll(
             listOf(
-                "--path", "${resticContext.workingDirectory}/${resticContext.defaultBackupPath}",
-                "--target", resticContext.defaultBackupPath,
+                "--path", "${resticConfig.workingDirectory}/${resticConfig.defaultBackupPath}",
+                "--target", resticConfig.defaultRestorePath,
                 snapshotId
             )
         )

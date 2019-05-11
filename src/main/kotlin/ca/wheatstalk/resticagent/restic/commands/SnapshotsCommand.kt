@@ -1,8 +1,7 @@
 package ca.wheatstalk.resticagent.restic.commands
 
-import ca.wheatstalk.resticagent.restic.ResticContext
-import ca.wheatstalk.resticagent.restic.ResticRunCommandBuilder
+import ca.wheatstalk.resticagent.restic.ResticConfig
 
-class SnapshotsCommand (resticContext: ResticContext) : CommandBase(resticContext) {
+class SnapshotsCommand (resticConfig: ResticConfig) : CommandBase(resticConfig) {
     fun snapshots() = runCommandBuilder.build(listOf("snapshots"))
 }

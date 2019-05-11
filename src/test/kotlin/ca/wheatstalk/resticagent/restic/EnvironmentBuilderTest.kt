@@ -11,12 +11,12 @@ internal class EnvironmentBuilderTest {
         val resticAwsAccessKeyId = "accesskeyid"
         val resticAwsSecretAccessKey = "secretkey"
 
-        val resticContext = ResticContext(
+        val resticContext = ResticConfig(
             repository = resticRepository,
             repositoryPassword = resticPassword,
+            defaultBackupPath = "",
             awsAccessKeyId = resticAwsAccessKeyId,
-            awsSecretAccessKey = resticAwsSecretAccessKey,
-            defaultBackupPath = ""
+            awsSecretAccessKey = resticAwsSecretAccessKey
         )
 
         val envBuilder = EnvironmentBuilder(resticContext)
